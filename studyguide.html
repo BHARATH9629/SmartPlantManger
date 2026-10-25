@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Plant Manager v2 — Key Data Structures</title>
+  <style>
+    :root {
+      --bg: #0f1712;
+      --card: #16241c;
+      --border: #2d5a3d;
+      --green: #3da85e;
+      --green-light: #6ee7a0;
+      --text: #e6f5ea;
+      --text-dim: #9fc2ab;
+      --code-bg: #0b120d;
+      --accent: #f4c95d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0 0 60px 0;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e5631, #2d8a4e);
+      padding: 36px 24px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      color: #d7f3e2;
+      font-size: 14px;
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-top: 28px;
+      padding: 24px 28px;
+    }
+
+    .section h2 {
+      color: var(--green-light);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 10px;
+      font-size: 22px;
+      margin-top: 0;
+    }
+
+    .tag {
+      display: inline-block;
+      background: rgba(61, 168, 94, .18);
+      color: var(--green-light);
+      border: 1px solid var(--green);
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .file-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #241a05;
+      font-weight: 700;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 12px;
+      margin-right: 6px;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      overflow-x: auto;
+      font-size: 13px;
+      color: #d3e8db;
+    }
+
+    code {
+      font-family: 'Consolas', 'Courier New', monospace;
+    }
+
+    .note {
+      background: rgba(244, 201, 93, .1);
+      border-left: 4px solid var(--accent);
+      padding: 10px 16px;
+      border-radius: 6px;
+      margin: 14px 0;
+      font-size: 14px;
+    }
+
+    .complexity {
+      display: inline-block;
+      background: #241a05;
+      color: var(--accent);
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(61, 168, 94, .15);
+      color: var(--green-light);
+    }
+
+    tr:nth-child(even) {
+      background: rgba(255, 255, 255, .02);
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin: 18px 0;
+      font-size: 13px;
+    }
+
+    .flow div {
+      background: var(--code-bg);
+      border: 1px solid var(--green);
+      border-radius: 8px;
+      padding: 8px 14px;
+      color: var(--green-light);
+      font-weight: 600;
+    }
+
+    .flow span.arrow {
+      color: var(--accent);
+      font-size: 18px;
+    }
+
+    .diagram {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #cfe9d8;
+      overflow-x: auto;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 13px;
+      margin-top: 40px;
+    }
+
+    .toc {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .toc li {
+      margin: 6px 0;
+    }
+
+    .toc a {
+      color: var(--green-light);
+      text-decoration: none;
+    }
+
+    .toc a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>🌿 Smart Plant Manager v2</h1>
+    <p>Data Structures Deep Dive — Function Pointer Dispatch Table &amp; Dynamic Growing Buffer</p>
+  </header>
+
+  <div class="wrap">
+
+    <div class="section">
+      <h2>Quick Navigation</h2>
+      <ul class="toc">
+        <li>1. <a href="#dispatch">Function Pointer Dispatch Table (Route[])</a></li>
+        <li>2. <a href="#buffer">Realloc-Doubling Dynamic Buffer</a></li>
+        <li>3. <a href="#summary">Combined Summary Table</a></li>
+      </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- DATA STRUCTURE 1                                              -->
+    <!-- ============================================================ -->
+    <div class="section" id="dispatch">
+      <span class="tag">Data Structure #1</span>
+      <h2>Function Pointer Dispatch Table (<code>Route[]</code>)</h2>
+
+      <p><span class="file-badge">config.h</span> defines the structure. <span class="file-badge">server.c</span> builds
+        and uses it.</p>
+
+      <h3>What it is</h3>
+      <p>An array of structs, where each struct bundles an HTTP method, a URL path, and a <strong>pointer to a
+          function</strong> that handles that exact request. Instead of writing a giant chain of
+        <code>if (path == "/api/garden") ... else if (path == "/api/add") ...</code>, the server just walks this array
+        and calls whichever function matches.</p>
+
+      <h3>Definition — <span class="file-badge">config.h</span></h3>
+      <pre><code>typedef void (*RouteHandler)(SOCKET fd, const char *body, MYSQL *db);
+
+typedef struct {
+    const char   *method;   // "GET" or "POST"
+    const char   *path;     // e.g. "/api/garden"
+    RouteHandler  handler;  // pointer to the function that handles it
+} Route;</code></pre>
+
+      <div class="note">
+        <strong>Key idea:</strong> <code>RouteHandler</code> is a <em>type</em> that can hold the address of any
+        function
+        matching <code>void f(SOCKET, const char*, MYSQL*)</code>. Every <code>api_*</code> function in
+        <code>db.c</code>
+        and <code>ai.c</code> matches this exact signature, so all of them can be stored in a <code>Route</code>.
+      </div>
+
+      <h3>Construction — <span class="file-badge">server.c</span></h3>
+      <pre><code>static Route routes[] = {
+    { "GET",  "/",                     serve_html       },
+    { "GET",  "/index.html",           serve_html       },
+    { "GET",  "/api/plants",           api_plants       },
+    { "GET",  "/api/garden",           api_garden       },
+    { "POST", "/api/garden/add",       api_add          },
+    { "POST", "/api/garden/water",     api_water        },
+    { "POST", "/api/garden/remove",    api_remove       },
+    { "POST", "/api/garden/bulk-water",api_bulk_water   },
+    { "POST", "/api/garden/fav",       api_toggle_fav   },
+    { "POST", "/api/auth/login",       api_login        },
+    { "POST", "/api/auth/register",    api_register     },
+    { "GET",  "/api/water-history",    api_water_history},
+    { "GET",  "/api/stats",            api_stats        },
+    { "POST", "/api/notes/add",        api_add_note     },
+    { "GET",  "/api/notes",            api_get_notes    },
+    { "GET",  "/api/activity",         api_get_activity },
+    { "GET",  "/api/server-info",      api_server_info  },
+    { "POST", "/api/chat",             api_chat         },
+    { NULL, NULL, NULL }   // sentinel — marks the end of the array
+};
+#define NUM_ROUTES (sizeof(routes) / sizeof(routes[0]) - 1)</code></pre>
+
+      <p>18 real entries, terminated with a <code>{NULL, NULL, NULL}</code> <strong>sentinel</strong> — this is how the
+        code
+        knows where the array ends, since plain C arrays don't track their own length at runtime.</p>
+
+      <h3>Lookup algorithm — <span class="file-badge">server.c</span></h3>
+      <pre><code>static RouteHandler find_route(const char *method, const char *path) {
+    char base[256];
+    strncpy(base, path, sizeof(base) - 1);
+    base[sizeof(base) - 1] = '\0';
+    char *q = strchr(base, '?');
+    if (q) *q = '\0';                 // strip off ?query=string
+
+    for (int i = 0; routes[i].method != NULL; i++) {
+        if (strcmp(method, routes[i].method) == 0 &&
+            strcmp(base, routes[i].path) == 0) {
+            return routes[i].handler;  // found it — return the function pointer
+        }
+    }
+    return NULL;   // 404
+}</code></pre>
+
+      <div class="flow">
+        <div>Request arrives</div><span class="arrow">→</span>
+        <div>parse method + path</div><span class="arrow">→</span>
+        <div>strip ?query</div><span class="arrow">→</span>
+        <div>linear scan routes[]</div><span class="arrow">→</span>
+        <div>match? call handler() : send 404</div>
+      </div>
+
+      <h3>Where it gets called — <span class="file-badge">server.c</span> → <code>handle_client()</code></h3>
+      <pre><code>RouteHandler handler = find_route(method, path);
+if (handler) {
+    EnterCriticalSection(&g_db_lock);
+    if (strcmp(method, "GET") == 0) handler(cfd, req, g_db);
+    else                            handler(cfd, body, g_db);
+    LeaveCriticalSection(&g_db_lock);
+} else {
+    send_resp(cfd, "404 Not Found", "application/json", "{\"error\":\"Route not found\"}");
+}</code></pre>
+      <p>Once the right function pointer is found, it's simply <em>called like a normal function</em> —
+        <code>handler(cfd, body, g_db)</code> — even though at compile time nobody knows exactly which function this
+        will be. That decision happens at runtime.</p>
+
+      <h3>Complexity &amp; honest analysis</h3>
+      <table>
+        <tr>
+          <th>Operation</th>
+          <th>Complexity</th>
+          <th>Why</th>
+        </tr>
+        <tr>
+          <td>Route lookup</td>
+          <td class="complexity">O(n)</td>
+          <td>Linear scan through all 18 routes worst case</td>
+        </tr>
+        <tr>
+          <td>Route dispatch (once found)</td>
+          <td class="complexity">O(1)</td>
+          <td>Direct function pointer call</td>
+        </tr>
+      </table>
+      <div class="note">
+        Could be optimized to a hash map (path → handler) for O(1) lookup, but with only 18 routes, linear scan
+        is effectively instant — this is a great honest point to make if your teacher asks "can this be improved?"
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- DATA STRUCTURE 2                                              -->
+    <!-- ============================================================ -->
+    <div class="section" id="buffer">
+      <span class="tag">Data Structure #2</span>
+      <h2>Realloc-Doubling Dynamic Buffer</h2>
+
+      <p><span class="file-badge">db.c</span> — used inside <code>api_plants()</code>, <code>api_garden()</code>, and
+        similar JSON-building handlers.</p>
+
+      <h3>What it is</h3>
+      <p>A manually-built <strong>growable array</strong> (the same technique <code>std::vector</code> or Java's
+        <code>ArrayList</code> use internally) that starts at a fixed size and <em>doubles its capacity</em> whenever
+        it's
+        about to overflow — instead of crashing or truncating data. Used to build a JSON response string when you don't
+        know in advance how many database rows (plants, garden entries) there will be.
+      </p>
+
+      <h3>Full pattern — <span class="file-badge">db.c</span> → <code>api_plants()</code></h3>
+      <pre><code>int cap = 65536, len = 0;                 // start with a 64KB buffer
+char *buf = (char *)malloc(cap);
+buf[len++] = '[';                          // begin JSON array
+
+MYSQL_ROW row;
+int first = 1;
+while ((row = mysql_fetch_row(res))) {
+
+    // ... build one JSON object for this row into item[] ...
+    char item[4096];
+    int n = snprintf(item, sizeof(item), "%s{...plant fields...}",
+                      first ? "" : ",", ...);
+    first = 0;
+
+    // GROW the buffer if this item won't fit
+    while (len + n + 2 >= cap) {
+        cap *= 2;                                   // double capacity
+        char *tmp = (char *)realloc(buf, cap);       // reallocate
+        if (!tmp) { free(buf); /* handle OOM */ }
+        buf = tmp;
+    }
+
+    memcpy(buf + len, item, n);            // copy item into the big buffer
+    len += n;
+}
+buf[len++] = ']';
+buf[len] = '\0';
+send_resp(fd, "200 OK", "application/json", buf);
+free(buf);</code></pre>
+
+      <h3>Step-by-step visual</h3>
+      <div class="diagram">
+        Initial: cap=65536 len=0 buf = [ ...................... ] (empty)
+        Add item 1: len grows → buf = [ {plant1} .................... ]
+        Add item 2: len grows → buf = [ {plant1},{plant2} ............ ]
+        ...
+        Buffer full? len + next_item + 2 >= cap → TRUE
+        → cap *= 2 (e.g. 65536 → 131072)
+        → realloc(buf, cap) (old data preserved automatically by realloc)
+        → keep appending into the now-bigger buffer
+      </div>
+
+      <h3>Why <code>realloc</code> instead of just guessing a big size?</h3>
+      <div class="note">
+        121 plants with long descriptions could need more than 64KB of JSON. Rather than hardcoding a giant fixed
+        buffer (wasteful for small responses) or risking overflow (dangerous), the buffer starts small and grows
+        <strong>only when needed</strong>, doubling each time. This gives <strong>amortized O(1)</strong> append cost —
+        most appends are cheap (just <code>memcpy</code>), and the occasional expensive <code>realloc</code> happens
+        rarely enough that the average cost per append stays constant.
+      </div>
+
+      <h3>Complexity &amp; honest analysis</h3>
+      <table>
+        <tr>
+          <th>Operation</th>
+          <th>Complexity</th>
+          <th>Why</th>
+        </tr>
+        <tr>
+          <td>Append one JSON item (no resize)</td>
+          <td class="complexity">O(k)</td>
+          <td><code>memcpy</code> of k bytes</td>
+        </tr>
+        <tr>
+          <td>Append one JSON item (triggers resize)</td>
+          <td class="complexity">O(n)</td>
+          <td><code>realloc</code> copies all n existing bytes</td>
+        </tr>
+        <tr>
+          <td>Overall, across all appends</td>
+          <td class="complexity">Amortized O(1)</td>
+          <td>Resizes become rare as capacity grows exponentially</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- COMBINED SUMMARY                                              -->
+    <!-- ============================================================ -->
+    <div class="section" id="summary">
+      <h2>📋 Quick Summary Table — Both Structures</h2>
+      <table>
+        <tr>
+          <th>Data Structure</th>
+          <th>File(s)</th>
+          <th>Real-World Equivalent</th>
+          <th>Used For</th>
+          <th>Complexity</th>
+        </tr>
+        <tr>
+          <td><strong>Function Pointer Dispatch Table</strong><br><code>Route[]</code></td>
+          <td>config.h (definition)<br>server.c (usage)</td>
+          <td>Router / jump table</td>
+          <td>Matching an incoming HTTP method+path to the correct handler function at runtime</td>
+          <td>O(n) lookup&nbsp;·&nbsp;O(1) call</td>
+        </tr>
+        <tr>
+          <td><strong>Realloc-Doubling Dynamic Buffer</strong></td>
+          <td>db.c</td>
+          <td><code>std::vector</code> / ArrayList (internal growth strategy)</td>
+          <td>Building a JSON response of unknown size from a variable number of MySQL rows</td>
+          <td>Amortized O(1) append</td>
+        </tr>
+      </table>
+
+      <div class="note">
+        <strong>Talking point for your teacher:</strong> these are the two places in the project where a real,
+        general-purpose data structure was built <em>from scratch in C</em>, rather than just using a fixed-size
+        array with a count field (like <code>PlantList</code>/<code>GardenList</code>/<code>FavSet</code> in
+        <code>plant.h</code>). They demonstrate runtime polymorphism via function pointers, and manual memory
+        management via <code>malloc</code>/<code>realloc</code>.
+      </div>
+    </div>
+
+    <p class="footer-note">Smart Plant Manager v2 — Study Reference · Generated for exam/demo prep</p>
+  </div>
+
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+# ============================================================
+# Git Ignore Configuration for Smart Plant Manager
+# ============================================================
+
+# 1. Environment & Secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# 2. Compiled Binaries & Object Files
+*.exe
+*.o
+*.obj
+*.dll
+libmysql.dll
+plant_manager.exe
+server.exe
+
+# 3. Node.js Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 4. Logs & Reports
+*.log
+server.log
+server.log.*
+garden_report.txt
+
+# 5. Editor & OS files
+.vscode/
+.idea/
+.dist/
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# 6. Unrelated Study Materials
+A.html
+B.html
+C.html
+D.html
+E.html
